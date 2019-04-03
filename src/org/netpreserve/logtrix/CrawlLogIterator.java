@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
@@ -35,7 +36,7 @@ import java.util.NoSuchElementException;
  * 
  * @author Kristinn Sigur&eth;sson
  */
-public class CrawlLogIterator implements AutoCloseable{
+public class CrawlLogIterator implements AutoCloseable, Iterable<CrawlDataItem>, Iterator<CrawlDataItem> {
     public static final String EXTRA_REVISIT_PROFILE="RevisitProfile";
     public static final String EXTRA_REVISIT_URI="RevisitRefersToURI";
     public static final String EXTRA_REVISIT_DATE="RevisitRefersToDate";
@@ -86,9 +87,13 @@ public class CrawlLogIterator implements AutoCloseable{
      *
      * @return True if at least one more item can be fetched with next().
      */
-    public boolean hasNext() throws IOException {
+    public boolean hasNext() {
         if(next == null){
-            prepareNext();
+            try {
+                prepareNext();
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
         }
         return next!=null;
     }
@@ -103,7 +108,7 @@ public class CrawlLogIterator implements AutoCloseable{
      *         item to be returned from the crawl.log.
      * @throws NoSuchElementException If there are no more items 
      */
-    public CrawlDataItem next() throws IOException{
+    public CrawlDataItem next() {
         if(hasNext()){
             CrawlDataItem tmp = next;
             this.next = null;
@@ -254,4 +259,8 @@ public class CrawlLogIterator implements AutoCloseable{
         in.close();
     }
 
+    @Override
+    public Iterator<CrawlDataItem> iterator() {
+        return this;
+    }
 }
