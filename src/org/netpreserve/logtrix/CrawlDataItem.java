@@ -22,6 +22,8 @@
  */
 package org.netpreserve.logtrix;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 /**
  * A base class for individual items of crawl data that should be added to the
  * index.
@@ -43,15 +45,13 @@ public class CrawlDataItem {
     protected String hoppath;
     protected String etag;
     protected String mimeType;
-    protected String originalURL;
-    protected String originalTimestamp;
-    protected String revisitProfile;
     protected boolean duplicate;
     protected long size;
     protected String originalCrawlLogLine;
     protected Boolean isProbablyNonDynamic;
-    
-	/**
+    private JsonNode extraInfo;
+
+    /**
      * Constructor. Creates a new CrawlDataItem with all its data initialized
      * to null.
      */
@@ -160,30 +160,6 @@ public class CrawlDataItem {
         this.mimeType = mimeType;
     }
 
-    public String getOriginalURL() {
-        return originalURL;
-    }
-
-    public void setOriginalURL(String originalURL) {
-        this.originalURL = originalURL;
-    }
-
-    public String getOriginalTimestamp() {
-        return originalTimestamp;
-    }
-
-    public void setOriginalTimestamp(String originalTimestamp) {
-        this.originalTimestamp = originalTimestamp;
-    }
-
-    public String getRevisitProfile() {
-        return revisitProfile;
-    }
-
-    public void setRevisitProfile(String revisitProfile) {
-        this.revisitProfile = revisitProfile;
-    }
-
     public boolean isDuplicate() {
         return duplicate;
     }
@@ -206,5 +182,13 @@ public class CrawlDataItem {
 
     public void setOriginalCrawlLogLine(String originalCrawlLogLine) {
         this.originalCrawlLogLine = originalCrawlLogLine;
+    }
+
+    public void setExtraInfo(JsonNode extraInfo) {
+        this.extraInfo = extraInfo;
+    }
+
+    public JsonNode getExtraInfo() {
+        return extraInfo;
     }
 }

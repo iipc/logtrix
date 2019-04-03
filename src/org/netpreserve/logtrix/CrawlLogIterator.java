@@ -22,6 +22,8 @@
  */
 package org.netpreserve.logtrix;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +44,7 @@ public class CrawlLogIterator implements AutoCloseable, Iterable<CrawlDataItem>,
     public static final String EXTRA_REVISIT_DATE="RevisitRefersToDate";
 
     private static final Logger log = LoggerFactory.getLogger(CrawlLogIterator.class);
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
 	/**
 	 * The date format used in crawl.log files.
@@ -145,7 +148,7 @@ public class CrawlLogIterator implements AutoCloseable, Iterable<CrawlDataItem>,
      * @return A {@link CrawlDataItem} if the next line in the crawl log yielded 
      *         a usable item, null otherwise.
      */
-    protected CrawlDataItem parseLine(String line) {
+    protected CrawlDataItem parseLine(String line) throws IOException {
         CrawlDataItem cdi = new CrawlDataItem();
 
         if (line != null && line.length() > 42) {
@@ -226,24 +229,9 @@ public class CrawlLogIterator implements AutoCloseable, Iterable<CrawlDataItem>,
         	}
             cdi.setDuplicate(revisit);
             
-            String originalURL = null;
-            String originalTimestamp = null;
-        	String revisitProfile = null;
-            
         	if(revisit && lineParts.length==13){
-// FIXME
-//        		try {
-//	            	JSONObject extraInfo = new JSONObject(lineParts[12]);
-//	            	originalURL = extraInfo.getString(EXTRA_REVISIT_URI);
-//	            	originalTimestamp = extraInfo.getString(EXTRA_REVISIT_DATE);
-//	            	revisitProfile=extraInfo.getString(EXTRA_REVISIT_PROFILE);
-//        		} catch (JSONException e) {
-//        			log.error("Error parsing extra info on line {}", line, e);
-//        		}
-            }
-        	cdi.setOriginalURL(originalURL);
-        	cdi.setOriginalTimestamp(originalTimestamp);
-        	cdi.setRevisitProfile(revisitProfile);
+        	    cdi.setExtraInfo(objectMapper.readTree(lineParts[12]));
+        	}
 
             // Got a valid item.
             cdi.setOriginalCrawlLogLine(line);
