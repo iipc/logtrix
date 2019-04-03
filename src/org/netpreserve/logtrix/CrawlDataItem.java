@@ -31,7 +31,6 @@ import java.time.Instant;
  * A base class for individual items of crawl data that should be added to the
  * index.
  * 
- * @author Kristinn Sigur&eth;sson
  */
 public final class CrawlDataItem {
     private String URL;
@@ -42,8 +41,9 @@ public final class CrawlDataItem {
     private String hoppath;
     private String etag;
     private String mimeType;
-    private boolean duplicate;
-    private long size;
+    private String sourceSeedUrl;
+	private boolean duplicate;
+    private long size = -1;
     private String originalCrawlLogLine;
     private Instant captureBegan;
     private Duration duration;
@@ -54,13 +54,6 @@ public final class CrawlDataItem {
      * to null.
      */
     CrawlDataItem() {
-        URL = null;
-        contentDigest = null;
-        timestamp = null;
-        etag = null;
-        mimeType = null;
-        duplicate = false;
-        size = -1;
     }
 
     public String getURL() {
@@ -171,7 +164,26 @@ public final class CrawlDataItem {
         return duration;
     }
 
-    void setDuration(Duration duration) {
+	Duration getDuration() {
+		return duration;
+	}
+
+	void setDuration(Duration duration) {
         this.duration = duration;
     }
+    
+	/**
+	 * Returns the URL of the seed that the current URL can be traced back to. Is only
+	 * available if the sourceTagSeeds configuration option was enabled at crawl time.
+	 * Otherwise this will be null.
+	 * 
+	 * @return
+	 */
+    String getSourceSeedUrl() {
+		return sourceSeedUrl;
+	}
+
+	void setSourceSeedUrl(String sourceSeedUrl) {
+		this.sourceSeedUrl = sourceSeedUrl;
+	}
 }
