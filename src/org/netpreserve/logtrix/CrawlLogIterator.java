@@ -22,12 +22,13 @@
  */
 package org.netpreserve.logtrix;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Iterator;
@@ -70,19 +71,26 @@ public class CrawlLogIterator implements AutoCloseable, Iterable<CrawlDataItem>,
      */
     CrawlDataItem next;
 
-    String crawlLog;
-    
-    /** 
+    /**
      * Create a new CrawlLogIterator that reads items from a Heritrix crawl.log
      *
-     * @param crawlLog The path of a Heritrix crawl.log file.
+     * @param path The path of a Heritrix crawl.log file.
      * @throws IOException If errors were found reading the log.
      */
-    public CrawlLogIterator(String crawlLog) 
-            throws IOException {
-    	this.crawlLog = crawlLog;
-        in = new BufferedReader(new InputStreamReader(
-                new FileInputStream(new File(crawlLog))));
+    public CrawlLogIterator(Path path) throws IOException {
+        this(Files.newBufferedReader(path));
+    }
+
+    public CrawlLogIterator(Reader reader) {
+        if (reader instanceof BufferedReader) {
+            in = (BufferedReader) reader;
+        } else {
+            in = new BufferedReader(reader);
+        }
+    }
+
+    public CrawlLogIterator(InputStream stream) {
+        this(new InputStreamReader(stream));
     }
 
     /** 

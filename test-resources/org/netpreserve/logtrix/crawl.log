@@ -1,0 +1,10 @@
+2019-04-03T11:15:34.547Z     1         60 dns:www.nla.gov.au P https://www.nla.gov.au/ text/dns #005 20190403111533835+88 sha1:IX3XBWGMPE6YHAI23RZ5WOQW7LUVTWRL - -
+2019-04-03T11:15:34.547Z     1         58 dns:trove.nla.gov.au P https://trove.nla.gov.au/ text/dns #013 20190403111533835+88 sha1:TZB2ZJIYG2JCXCEEMLQBZBRPB7O5HLLQ - -
+2019-04-03T11:15:40.735Z   200       2419 https://www.nla.gov.au/robots.txt P https://www.nla.gov.au/ text/plain #013 20190403111537663+3009 sha1:5EPWKI3UTXDMSJAHMIJ5K7GG6IWCEYVR - -
+2019-04-03T11:15:40.787Z   200        868 https://trove.nla.gov.au/robots.txt P https://trove.nla.gov.au/ text/plain #005 20190403111537654+3115 sha1:FLYK3OSFKQFJ22QCRE3H4UPGFOECPR2O - -
+2019-04-03T11:15:59.643Z   200      12762 https://trove.nla.gov.au/ - - text/html #013 20190403111556775+2163 sha1:EVIOANLOBTQAZPYDTGHBQYBX5XXUBTP3 - 3t
+2019-04-03T11:15:59.694Z     1         75 dns:www.google-analytics.com XP https://www.google-analytics.com/analytics.js text/dns #013 20190403111559676+17 sha1:SA7KKTX67KHOBFILMIP27NTZNEBNIE3U - -
+2019-04-03T11:16:00.307Z   200      84465 https://www.nla.gov.au/ - - text/html #002 20190403111555799+3021 sha1:ZDZH7LRCOUX6EGLPBFCCKCN6A7PNJKJ6 - 3t
+2019-04-03T11:16:00.334Z     1        602 dns:www.youtube.com XP https://www.youtube.com/ text/dns #002 20190403111600320+7 sha1:4WP3UVEOLDANMWNWQ3QWI7VANPP5NY3U - -
+2019-04-03T11:16:00.383Z     1        379 dns:static.hotjar.com XP https://static.hotjar.com/c/hotjar- text/dns #002 20190403111600340+42 sha1:F3KO34UV4D25BZXTB3ZME2HOGBAR7TIA - -
+2019-04-03T11:16:02.897Z   200         78 https://www.google-analytics.com/robots.txt XP https://www.google-analytics.com/analytics.js text/plain #013 20190403111602703+190 sha1:BXF7TB66SUXCQHKMMDI3JX7XUVMMRTWM - -
