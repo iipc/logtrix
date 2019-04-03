@@ -10,6 +10,8 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.netpreserve.logtrix.CrawlLogUtils.canonicalizeMimeType;
+
 public class CrawlSummary {
 
     private final Map<Integer, Stats> statusCodes;
@@ -25,7 +27,8 @@ public class CrawlSummary {
         Map<String, Stats> mimeTypes = new HashMap<>();
 
         for (CrawlDataItem item : log) {
-            mimeTypes.computeIfAbsent(item.getMimeType(), m -> new Stats()).add(item);
+            String mimeType = canonicalizeMimeType(item.getMimeType());
+            mimeTypes.computeIfAbsent(mimeType, m -> new Stats()).add(item);
             statusCodes.computeIfAbsent(item.getStatusCode(), s -> new Stats()).add(item);
         }
 
@@ -51,6 +54,7 @@ public class CrawlSummary {
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+
         try (CrawlLogIterator log = new CrawlLogIterator(Paths.get(args[0]))) {
             CrawlSummary summary = CrawlSummary.build(log);
             objectMapper.writeValue(System.out, summary);
