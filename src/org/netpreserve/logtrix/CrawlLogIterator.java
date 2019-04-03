@@ -177,7 +177,7 @@ public class CrawlLogIterator implements AutoCloseable, Iterable<CrawlDataItem>,
             }
 
             // Index 1: status return code 
-            cdi.setStatusCode(lineParts[1]);
+            cdi.setStatusCode(Integer.parseInt(lineParts[1]));
             
             // Index 2: File size 
             long size = -1;

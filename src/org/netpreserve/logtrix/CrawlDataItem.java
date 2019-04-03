@@ -36,7 +36,7 @@ import java.time.Instant;
 public final class CrawlDataItem {
     private String URL;
     private String parentURL;
-    private String statusCode;
+    private int statusCode;
     private String contentDigest;
     private Instant timestamp;
     private String hoppath;
@@ -79,11 +79,11 @@ public final class CrawlDataItem {
         this.parentURL = parentURL;
     }
 
-    public String getStatusCode() {
+    public int getStatusCode() {
         return statusCode;
     }
 
-    void setStatusCode(String statusCode) {
+    void setStatusCode(int statusCode) {
         this.statusCode = statusCode;
     }
 
