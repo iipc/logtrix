@@ -7,7 +7,8 @@ public class Stats {
     private long count;
     private long bytes;
     private long millis;
-    private Instant lastSeen;
+    private Instant firstTime;
+    private Instant lastTime;
 
     Stats() {}
 
@@ -18,15 +19,15 @@ public class Stats {
         if (captureDuration != null) {
             millis += captureDuration.toMillis();
         }
-        lastSeen = item.getCaptureBegan();
-    }
-
-    @Override
-    public String toString() {
-        return "count=" + count +
-                " bytes=" + bytes +
-                " millis=" + millis +
-                " lastSeen=" + lastSeen;
+        Instant time = item.getCaptureBegan();
+        if (time != null) {
+            if (firstTime == null || time.isBefore(firstTime)) {
+                firstTime = time;
+            }
+            if (lastTime == null || time.isAfter(lastTime)) {
+                lastTime = time;
+            }
+        }
     }
 
     public long getCount() {
@@ -41,7 +42,11 @@ public class Stats {
         return millis;
     }
 
-    public Instant getLastSeen() {
-        return lastSeen;
+    public Instant getLastTime() {
+        return lastTime;
+    }
+
+    public Instant getFirstTime() {
+        return firstTime;
     }
 }
