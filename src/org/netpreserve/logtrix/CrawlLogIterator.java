@@ -184,8 +184,8 @@ public class CrawlLogIterator implements AutoCloseable, Iterable<CrawlDataItem>,
             // Index 7: ToeThread number (ignore)
 
             // Index 8: ArcTimeAndDuration
-            {
-                String timeAndDuration = lineParts[8];
+            String timeAndDuration = lineParts[8];
+            if (!timeAndDuration.equals("-")) {
                 int i = timeAndDuration.indexOf('+');
                 String time = timeAndDuration.substring(0, i);
                 int millis = Integer.parseInt(timeAndDuration.substring(i + 1));

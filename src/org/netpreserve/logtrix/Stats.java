@@ -1,5 +1,6 @@
 package org.netpreserve.logtrix;
 
+import java.time.Duration;
 import java.time.Instant;
 
 public class Stats {
@@ -13,7 +14,10 @@ public class Stats {
     void add(CrawlDataItem item) {
         count++;
         bytes += item.getSize();
-        millis += item.getCaptureDuration().toMillis();
+        Duration captureDuration = item.getCaptureDuration();
+        if (captureDuration != null) {
+            millis += captureDuration.toMillis();
+        }
         lastSeen = item.getCaptureBegan();
     }
 

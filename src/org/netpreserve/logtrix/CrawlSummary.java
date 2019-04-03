@@ -1,6 +1,8 @@
 package org.netpreserve.logtrix;
 
+import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,5 +40,12 @@ public class CrawlSummary {
 
     public Map<String, Stats> getMimeTypes() {
         return mimeTypes;
+    }
+
+    public static void main(String[] args) throws IOException {
+        try (CrawlLogIterator log = new CrawlLogIterator(Paths.get(args[0]))) {
+            CrawlSummary summary = CrawlSummary.build(log);
+            summary.print(System.out);
+        }
     }
 }
