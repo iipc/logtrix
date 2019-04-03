@@ -1,36 +1,13 @@
-/* CrawlLogIterator
- * 
- * Created on 10.04.2006
- *
- * Copyright (C) 2006 National and University Library of Iceland
- * 
- * This file is part of the DeDuplicator (Heritrix add-on module).
- * 
- * DeDuplicator is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser Public License as published by
- * the Free Software Foundation; either version 2.1 of the License, or
- * any later version.
- * 
- * DeDuplicator is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser Public License
- * along with DeDuplicator; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- */
 package org.netpreserve.logtrix;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneOffset;
@@ -40,11 +17,11 @@ import java.time.temporal.ChronoUnit;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-/**
- * Based on the CrawLogIterator in the DeDuplicator
- * 
- * @author Kristinn Sigur&eth;sson
- */
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public class CrawlLogIterator implements AutoCloseable, Iterable<CrawlDataItem>, Iterator<CrawlDataItem> {
     private static final DateTimeFormatter OLD_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS").withZone(ZoneOffset.UTC);
     private static final Logger log = LoggerFactory.getLogger(CrawlLogIterator.class);
@@ -163,9 +140,8 @@ public class CrawlLogIterator implements AutoCloseable, Iterable<CrawlDataItem>,
             }
             
             // Index 0: Timestamp 
-            String timestamp;
             try {
-                // Convert from crawl.log format to the format specified by CrawlDataItem
+                // Convert from crawl.log format to Instant
             	if (lineParts[0].contains("T")){
             	    cdi.setTimestamp(Instant.parse(lineParts[0]));
             	} else {
@@ -198,6 +174,7 @@ public class CrawlLogIterator implements AutoCloseable, Iterable<CrawlDataItem>,
             
             // Index 4: Hop path
             cdi.setHoppath(lineParts[4]);
+            
             // Index 5: Parent URL
             cdi.setParentURL(lineParts[5]);
             
@@ -206,7 +183,7 @@ public class CrawlLogIterator implements AutoCloseable, Iterable<CrawlDataItem>,
 
             // Index 7: ToeThread number (ignore)
 
-            // Index 8: ArcTimeAndDuration (ignore)
+            // Index 8: ArcTimeAndDuration
             {
                 String timeAndDuration = lineParts[8];
                 int i = timeAndDuration.indexOf('+');
@@ -221,12 +198,15 @@ public class CrawlLogIterator implements AutoCloseable, Iterable<CrawlDataItem>,
             // The digest may contain a prefix. 
             // The prefix will be terminated by a : which is immediately 
             // followed by the actual digest
-            if(digest.lastIndexOf(":") >= 0){
+			if (digest.lastIndexOf(":") >= 0) {
             	digest = digest.substring(digest.lastIndexOf(":")+1);
             }
             cdi.setContentDigest(digest);
             
             // Index 10: Source tag (ignore)
+            if (!lineParts[10].equals("-")) {
+                cdi.setSourceSeedUrl(lineParts[10]);
+            } // else sourceTagSeeds was disabled
             
             // Index 11: Annotations (may be missing)
             boolean revisit = false;
