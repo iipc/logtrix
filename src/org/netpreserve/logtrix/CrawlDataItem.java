@@ -38,7 +38,7 @@ public final class CrawlDataItem {
     private String parentURL;
     private String statusCode;
     private String contentDigest;
-    private String timestamp;
+    private Instant timestamp;
     private String hoppath;
     private String etag;
     private String mimeType;
@@ -95,11 +95,11 @@ public final class CrawlDataItem {
         this.contentDigest = contentDigest;
     }
 
-    public String getTimestamp() {
+    public Instant getTimestamp() {
         return timestamp;
     }
 
-    void setTimestamp(String timestamp) {
+    void setTimestamp(Instant timestamp) {
         this.timestamp = timestamp;
     }
 

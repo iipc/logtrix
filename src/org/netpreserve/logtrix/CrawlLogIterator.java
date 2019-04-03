@@ -35,6 +35,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -45,27 +46,10 @@ import java.util.NoSuchElementException;
  * @author Kristinn Sigur&eth;sson
  */
 public class CrawlLogIterator implements AutoCloseable, Iterable<CrawlDataItem>, Iterator<CrawlDataItem> {
-    public static final String EXTRA_REVISIT_PROFILE="RevisitProfile";
-    public static final String EXTRA_REVISIT_URI="RevisitRefersToURI";
-    public static final String EXTRA_REVISIT_DATE="RevisitRefersToDate";
     private static final DateTimeFormatter OLD_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS").withZone(ZoneOffset.UTC);
-
     private static final Logger log = LoggerFactory.getLogger(CrawlLogIterator.class);
+
     private final ObjectMapper objectMapper = new ObjectMapper();
-
-	/**
-	 * The date format used in crawl.log files.
-	 */
-    protected final SimpleDateFormat crawlDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-    protected final SimpleDateFormat oldCrawlDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-
-
-    /**
-     * The date format specified by the {@link CrawlDataItem} for dates 
-     * entered into it (and eventually into the index)
-     */
-    protected final SimpleDateFormat crawlDataItemFormat = 
-    	new SimpleDateFormat(CrawlDataItem.dateFormat);
 
     /** 
      * A reader for the crawl.log file being processed
@@ -183,17 +167,15 @@ public class CrawlLogIterator implements AutoCloseable, Iterable<CrawlDataItem>,
             try {
                 // Convert from crawl.log format to the format specified by CrawlDataItem
             	if (lineParts[0].contains("T")){
-            		timestamp = crawlDataItemFormat.format(crawlDateFormat.parse(lineParts[0]));
+            	    cdi.setTimestamp(Instant.parse(lineParts[0]));
             	} else {
-            		// Old crawl log date format
-            		timestamp = crawlDataItemFormat.format(oldCrawlDateFormat.parse(lineParts[0]));
+            	    cdi.setTimestamp(Instant.from(OLD_DATE_FORMAT.parse(lineParts[0])));
             	}
-            } catch (ParseException e) {
+            } catch (DateTimeParseException e) {
                 log.error("Error parsing date for: {}", line, e);
                 return null;
             }
-            cdi.setTimestamp(timestamp);
-            
+
             // Index 1: status return code 
             cdi.setStatusCode(lineParts[1]);
             
