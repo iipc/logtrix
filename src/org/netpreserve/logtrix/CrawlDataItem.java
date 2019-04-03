@@ -35,11 +35,6 @@ import java.time.Instant;
  */
 public class CrawlDataItem {
     
-    /**
-     * The proper formating of {@link #setURL(String)} and {@link #getURL()}
-     */
-	public static final String dateFormat = "yyyy-MM-dd HH:mm:ss.SSS";
-    
     protected String URL;
     protected String parentURL;
     protected String statusCode;
@@ -67,10 +62,6 @@ public class CrawlDataItem {
         mimeType = null;
         duplicate = false;
         size = -1;
-    }
-
-    public static String getDateFormat() {
-        return dateFormat;
     }
 
     public String getURL() {
