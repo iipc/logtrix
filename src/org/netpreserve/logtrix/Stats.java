@@ -4,10 +4,10 @@ import java.time.Duration;
 import java.time.Instant;
 
 public class Stats {
-    long count;
-    long bytes;
-    long millis;
-    Instant lastSeen;
+    private long count;
+    private long bytes;
+    private long millis;
+    private Instant lastSeen;
 
     Stats() {}
 
@@ -27,5 +27,21 @@ public class Stats {
                 " bytes=" + bytes +
                 " millis=" + millis +
                 " lastSeen=" + lastSeen;
+    }
+
+    public long getCount() {
+        return count;
+    }
+
+    public long getBytes() {
+        return bytes;
+    }
+
+    public long getMillis() {
+        return millis;
+    }
+
+    public Instant getLastSeen() {
+        return lastSeen;
     }
 }

@@ -1,5 +1,9 @@
 package org.netpreserve.logtrix;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Paths;
@@ -43,9 +47,13 @@ public class CrawlSummary {
     }
 
     public static void main(String[] args) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
         try (CrawlLogIterator log = new CrawlLogIterator(Paths.get(args[0]))) {
             CrawlSummary summary = CrawlSummary.build(log);
-            summary.print(System.out);
+            objectMapper.writeValue(System.out, summary);
         }
     }
 }
