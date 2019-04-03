@@ -33,19 +33,18 @@ import java.time.Instant;
  * 
  * @author Kristinn Sigur&eth;sson
  */
-public class CrawlDataItem {
-    
-    protected String URL;
-    protected String parentURL;
-    protected String statusCode;
-    protected String contentDigest;
-    protected String timestamp;
-    protected String hoppath;
-    protected String etag;
-    protected String mimeType;
-    protected boolean duplicate;
-    protected long size;
-    protected String originalCrawlLogLine;
+public final class CrawlDataItem {
+    private String URL;
+    private String parentURL;
+    private String statusCode;
+    private String contentDigest;
+    private String timestamp;
+    private String hoppath;
+    private String etag;
+    private String mimeType;
+    private boolean duplicate;
+    private long size;
+    private String originalCrawlLogLine;
     private Instant captureBegan;
     private Duration duration;
     private JsonNode extraInfo;
@@ -54,7 +53,7 @@ public class CrawlDataItem {
      * Constructor. Creates a new CrawlDataItem with all its data initialized
      * to null.
      */
-    public CrawlDataItem(){
+    CrawlDataItem() {
         URL = null;
         contentDigest = null;
         timestamp = null;
@@ -68,7 +67,7 @@ public class CrawlDataItem {
         return URL;
     }
 
-    public void setURL(String URL) {
+    void setURL(String URL) {
         this.URL = URL;
     }
 
@@ -76,7 +75,7 @@ public class CrawlDataItem {
         return parentURL;
     }
 
-    public void setParentURL(String parentURL) {
+    void setParentURL(String parentURL) {
         this.parentURL = parentURL;
     }
 
@@ -84,7 +83,7 @@ public class CrawlDataItem {
         return statusCode;
     }
 
-    public void setStatusCode(String statusCode) {
+    void setStatusCode(String statusCode) {
         this.statusCode = statusCode;
     }
 
@@ -92,7 +91,7 @@ public class CrawlDataItem {
         return contentDigest;
     }
 
-    public void setContentDigest(String contentDigest) {
+    void setContentDigest(String contentDigest) {
         this.contentDigest = contentDigest;
     }
 
@@ -100,7 +99,7 @@ public class CrawlDataItem {
         return timestamp;
     }
 
-    public void setTimestamp(String timestamp) {
+    void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
     }
 
@@ -108,7 +107,7 @@ public class CrawlDataItem {
         return hoppath;
     }
 
-    public void setHoppath(String hoppath) {
+    void setHoppath(String hoppath) {
         this.hoppath = hoppath;
     }
 
@@ -116,7 +115,7 @@ public class CrawlDataItem {
         return etag;
     }
 
-    public void setEtag(String etag) {
+    void setEtag(String etag) {
         this.etag = etag;
     }
 
@@ -124,7 +123,7 @@ public class CrawlDataItem {
         return mimeType;
     }
 
-    public void setMimeType(String mimeType) {
+    void setMimeType(String mimeType) {
         this.mimeType = mimeType;
     }
 
@@ -132,7 +131,7 @@ public class CrawlDataItem {
         return duplicate;
     }
 
-    public void setDuplicate(boolean duplicate) {
+    void setDuplicate(boolean duplicate) {
         this.duplicate = duplicate;
     }
 
@@ -140,7 +139,7 @@ public class CrawlDataItem {
         return size;
     }
 
-    public void setSize(long size) {
+    void setSize(long size) {
         this.size = size;
     }
 
@@ -148,11 +147,11 @@ public class CrawlDataItem {
         return originalCrawlLogLine;
     }
 
-    public void setOriginalCrawlLogLine(String originalCrawlLogLine) {
+    void setOriginalCrawlLogLine(String originalCrawlLogLine) {
         this.originalCrawlLogLine = originalCrawlLogLine;
     }
 
-    public void setExtraInfo(JsonNode extraInfo) {
+    void setExtraInfo(JsonNode extraInfo) {
         this.extraInfo = extraInfo;
     }
 
@@ -164,7 +163,7 @@ public class CrawlDataItem {
         return captureBegan;
     }
 
-    public void setCaptureBegan(Instant captureBegan) {
+    void setCaptureBegan(Instant captureBegan) {
         this.captureBegan = captureBegan;
     }
 
@@ -172,7 +171,7 @@ public class CrawlDataItem {
         return duration;
     }
 
-    public void setDuration(Duration duration) {
+    void setDuration(Duration duration) {
         this.duration = duration;
     }
 }
