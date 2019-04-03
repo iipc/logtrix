@@ -51,7 +51,6 @@ public class CrawlDataItem {
     protected boolean duplicate;
     protected long size;
     protected String originalCrawlLogLine;
-    protected Boolean isProbablyNonDynamic;
     private Instant captureBegan;
     private Duration duration;
     private JsonNode extraInfo;
@@ -69,33 +68,6 @@ public class CrawlDataItem {
         duplicate = false;
         size = -1;
     }
-	
-	public boolean isProbablyNonDynamic() {
-		if (isProbablyNonDynamic!=null) {
-			return isProbablyNonDynamic;
-		}
-		
-		if (getSize()==0
-				|| getMimeType().equals("text/html")
-				|| getMimeType().equals("unknown")
-				|| getMimeType().equals("text/calendar")
-				|| getMimeType().equals("text/xml")
-				|| getMimeType().equals("application/rss+xml")
-				|| getMimeType().equals("application/atom+xml")
-				|| getMimeType().equals("application/json")
-				|| getStatusCode().equals("-5000")
-				|| getURL().matches("^.*captcha.*$")
-				|| getURL().matches("^.*lightbox.js.*$")
-				|| getURL().matches("^.*image.php?target=image_verification.*$")
-				) {
-			isProbablyNonDynamic = false;
-			return false;
-		}
-		
-		isProbablyNonDynamic = true;
-		return true;
-	}
-
 
     public static String getDateFormat() {
         return dateFormat;
