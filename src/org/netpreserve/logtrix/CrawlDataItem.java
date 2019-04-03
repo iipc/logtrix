@@ -24,6 +24,9 @@ package org.netpreserve.logtrix;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import java.time.Duration;
+import java.time.Instant;
+
 /**
  * A base class for individual items of crawl data that should be added to the
  * index.
@@ -49,6 +52,8 @@ public class CrawlDataItem {
     protected long size;
     protected String originalCrawlLogLine;
     protected Boolean isProbablyNonDynamic;
+    private Instant captureBegan;
+    private Duration duration;
     private JsonNode extraInfo;
 
     /**
@@ -190,5 +195,21 @@ public class CrawlDataItem {
 
     public JsonNode getExtraInfo() {
         return extraInfo;
+    }
+
+    public Instant getCaptureBegan() {
+        return captureBegan;
+    }
+
+    public void setCaptureBegan(Instant captureBegan) {
+        this.captureBegan = captureBegan;
+    }
+
+    public Duration getCaptureDuration() {
+        return duration;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
     }
 }

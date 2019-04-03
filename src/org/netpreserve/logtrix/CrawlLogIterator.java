@@ -31,6 +31,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -43,6 +48,7 @@ public class CrawlLogIterator implements AutoCloseable, Iterable<CrawlDataItem>,
     public static final String EXTRA_REVISIT_PROFILE="RevisitProfile";
     public static final String EXTRA_REVISIT_URI="RevisitRefersToURI";
     public static final String EXTRA_REVISIT_DATE="RevisitRefersToDate";
+    private static final DateTimeFormatter OLD_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS").withZone(ZoneOffset.UTC);
 
     private static final Logger log = LoggerFactory.getLogger(CrawlLogIterator.class);
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -52,6 +58,7 @@ public class CrawlLogIterator implements AutoCloseable, Iterable<CrawlDataItem>,
 	 */
     protected final SimpleDateFormat crawlDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     protected final SimpleDateFormat oldCrawlDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+
 
     /**
      * The date format specified by the {@link CrawlDataItem} for dates 
@@ -216,7 +223,16 @@ public class CrawlLogIterator implements AutoCloseable, Iterable<CrawlDataItem>,
             cdi.setMimeType(lineParts[6]);
 
             // Index 7: ToeThread number (ignore)
+
             // Index 8: ArcTimeAndDuration (ignore)
+            {
+                String timeAndDuration = lineParts[8];
+                int i = timeAndDuration.indexOf('+');
+                String time = timeAndDuration.substring(0, i);
+                int millis = Integer.parseInt(timeAndDuration.substring(i + 1));
+                cdi.setCaptureBegan(Instant.from(OLD_DATE_FORMAT.parse(time)));
+                cdi.setDuration(Duration.of(millis, ChronoUnit.MILLIS));
+            }
 
             // Index 9: Digest
             String digest = lineParts[9];
