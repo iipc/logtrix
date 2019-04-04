@@ -24,6 +24,12 @@ CrawlSummary.byHost(log);
 CrawlSummary.byKey(log, item -> item.getCaptureBegan().toString().substring(0, 4)); // by year
 ```
 
+### Limit top N results
+
+```java
+CrawlSummary.build(log).topN(10); // top 10 status codes, mime-types etc
+```
+
 ### Working with status codes
 
 ```java

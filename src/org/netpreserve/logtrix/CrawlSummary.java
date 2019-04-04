@@ -11,17 +11,21 @@ import java.net.URI;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 import static com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT;
 import static com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS;
+import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.toMap;
 import static org.netpreserve.logtrix.CrawlLogUtils.canonicalizeMimeType;
 
 public class CrawlSummary {
 
     private final Stats totals = new Stats();
-    private final Map<Integer, Stats> statusCodes = new HashMap<>();
-    private final Map<String, Stats> mimeTypes = new HashMap<>();
+    private Map<Integer, Stats> statusCodes = new HashMap<>();
+    private Map<String, Stats> mimeTypes = new HashMap<>();
 
     /**
      * Builds a global crawl summary (not broken down).
@@ -73,6 +77,30 @@ public class CrawlSummary {
         totals.add(item);
     }
 
+    /**
+     * Returns a new CrawlSummary with the mime-type and status-code lists limited to the top-N results.
+     */
+    public CrawlSummary topN(long n) {
+        CrawlSummary summary = new CrawlSummary();
+        summary.mimeTypes = mimeTypes.entrySet().stream().parallel()
+                .sorted(comparing(e -> -e.getValue().getCount()))
+                .limit(n)
+                .collect(toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (a, b) -> b,
+                        LinkedHashMap::new));
+        summary.statusCodes = statusCodes.entrySet().stream().parallel()
+                .sorted(comparing(e -> -e.getValue().getCount()))
+                .limit(n)
+                .collect(toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (a, b) -> b,
+                        LinkedHashMap::new));
+        return summary;
+    }
+
     public Stats getTotals() {
         return totals;
     }
@@ -89,20 +117,29 @@ public class CrawlSummary {
         NONE, HOST, RDOMAIN
     }
 
+    @SuppressWarnings("unchecked")
     public static void main(String[] args) throws IOException {
         List<String> files = new ArrayList<>();
-        Function<Iterable<CrawlDataItem>,Object> summarisier = CrawlSummary::build;
+        Function<Iterable<CrawlDataItem>, Object> summarisier = CrawlSummary::build;
+        long topN = 0;
         for (int i = 0; i < args.length; i++) {
             if (args[i].startsWith("-")) {
                 switch (args[i]) {
                     case "-g":
                         switch (args[++i].toLowerCase(Locale.US)) {
-                            case "host": summarisier = CrawlSummary::byHost; break;
-                            case "registered-domain": summarisier = CrawlSummary::byRegisteredDomain; break;
+                            case "host":
+                                summarisier = CrawlSummary::byHost;
+                                break;
+                            case "registered-domain":
+                                summarisier = CrawlSummary::byRegisteredDomain;
+                                break;
                             default:
                                 System.err.println("-g must be host or registered-domain");
                                 System.exit(1);
                         }
+                        break;
+                    case "-n":
+                        topN = Long.parseLong(args[++i]);
                         break;
                     case "-h":
                     case "--help":
@@ -124,8 +161,25 @@ public class CrawlSummary {
         objectMapper.enable(INDENT_OUTPUT);
         objectMapper.setSerializationInclusion(NON_NULL);
 
-        try (CrawlLogIterator log = new CrawlLogIterator(Paths.get(args[0]))) {
-            objectMapper.writeValue(System.out, summarisier.apply(log));
+        try (CrawlLogIterator log = new CrawlLogIterator(Paths.get(files.get(0)))) {
+            Object summary = summarisier.apply(log);
+
+            // limit to top N results
+            if (topN > 0) {
+                if (summary instanceof Map) {
+                    Map<Object, CrawlSummary> map = new HashMap<>();
+                    for (Map.Entry<Object, CrawlSummary> entry : ((Map<Object, CrawlSummary>) summary).entrySet()) {
+                        map.put(entry.getKey(), entry.getValue().topN(topN));
+                    }
+                    summary = map;
+                } else if (summary instanceof CrawlSummary) {
+                    summary = ((CrawlSummary) summary).topN(topN);
+                } else {
+                    throw new AssertionError("unexpected");
+                }
+            }
+
+            objectMapper.writeValue(System.out, summary);
         }
     }
 
@@ -133,6 +187,7 @@ public class CrawlSummary {
         System.out.println("Usage: CrawlSummary [options...] crawl.log\n" +
                 "\n" +
                 "Options:\n" +
-                "  -g {host,registered-domain}   Group summary by host or registered domain");
+                "  -g {host,registered-domain}   Group summary by host or registered domain\n" +
+                "  -n N                          Limit to top N results");
     }
 }
