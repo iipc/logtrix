@@ -12,7 +12,9 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -23,7 +25,10 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class CrawlLogIterator implements AutoCloseable, Iterable<CrawlDataItem>, Iterator<CrawlDataItem> {
-    private static final DateTimeFormatter OLD_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS").withZone(ZoneOffset.UTC);
+    private static final DateTimeFormatter OLD_DATE_FORMAT = new DateTimeFormatterBuilder()
+            .appendPattern("yyyyMMddHHmmss")
+            .appendValue(ChronoField.MILLI_OF_SECOND, 3) // workaround Java 8 pattern bug
+            .toFormatter().withZone(ZoneOffset.UTC);
     private static final Logger log = LoggerFactory.getLogger(CrawlLogIterator.class);
 
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -189,7 +194,7 @@ public class CrawlLogIterator implements AutoCloseable, Iterable<CrawlDataItem>,
                 int i = timeAndDuration.indexOf('+');
                 String time = timeAndDuration.substring(0, i);
                 int millis = Integer.parseInt(timeAndDuration.substring(i + 1));
-                cdi.setCaptureBegan(Instant.from(OLD_DATE_FORMAT.parse(time)));
+                cdi.setCaptureBegan(OLD_DATE_FORMAT.parse(time, Instant::from));
                 cdi.setDuration(Duration.of(millis, ChronoUnit.MILLIS));
             }
 
