@@ -23,7 +23,7 @@ import static org.netpreserve.logtrix.CrawlLogUtils.canonicalizeMimeType;
 
 public class CrawlSummary {
 
-    private final Stats totals = new Stats();
+    private Stats totals = new Stats();
     private Map<Integer, Stats> statusCodes = new HashMap<>();
     private Map<String, Stats> mimeTypes = new HashMap<>();
 
@@ -82,6 +82,7 @@ public class CrawlSummary {
      */
     public CrawlSummary topN(long n) {
         CrawlSummary summary = new CrawlSummary();
+        summary.totals = totals;
         summary.mimeTypes = mimeTypes.entrySet().stream().parallel()
                 .sorted(comparing(e -> -e.getValue().getCount()))
                 .limit(n)
