@@ -1,17 +1,20 @@
 package org.netpreserve.logtrix;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.net.InternetDomainName;
 
 import java.io.IOException;
-import java.io.PrintStream;
 import java.net.URI;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.function.Function;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+import static com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT;
+import static com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS;
 import static org.netpreserve.logtrix.CrawlLogUtils.canonicalizeMimeType;
 
 public class CrawlSummary {
@@ -31,7 +34,10 @@ public class CrawlSummary {
         return summary;
     }
 
-    public static Map<String, CrawlSummary> byKey(Iterable<CrawlDataItem> log, Function<CrawlDataItem, String> keyFunction) {
+    /**
+     * Builds a crawl summary grouped by the given key function.
+     */
+    public static Map<String, CrawlSummary> groupedBy(Iterable<CrawlDataItem> log, Function<CrawlDataItem, String> keyFunction) {
         Map<String, CrawlSummary> map = new HashMap<>();
         for (CrawlDataItem item : log) {
             String key = keyFunction.apply(item);
@@ -41,7 +47,7 @@ public class CrawlSummary {
     }
 
     public static Map<String, CrawlSummary> byHost(Iterable<CrawlDataItem> log) {
-        return byKey(log, item -> {
+        return groupedBy(log, item -> {
             try {
                 return URI.create(item.getURL()).getHost();
             } catch (Exception e) {
@@ -51,7 +57,7 @@ public class CrawlSummary {
     }
 
     public static Map<String, CrawlSummary> byRegisteredDomain(Iterable<CrawlDataItem> log) {
-        return byKey(log, item -> {
+        return groupedBy(log, item -> {
             try {
                 return InternetDomainName.from(URI.create(item.getURL()).getHost()).topPrivateDomain().toString();
             } catch (Exception e) {
@@ -63,7 +69,7 @@ public class CrawlSummary {
     private void add(CrawlDataItem item) {
         String mimeType = canonicalizeMimeType(item.getMimeType());
         mimeTypes.computeIfAbsent(mimeType, m -> new Stats()).add(item);
-        statusCodes.computeIfAbsent(item.getStatusCode(), s -> new Stats()).add(item);
+        statusCodes.computeIfAbsent(item.getStatusCode(), code -> new Stats(StatusCodes.describe(code))).add(item);
         totals.add(item);
     }
 
@@ -114,8 +120,9 @@ public class CrawlSummary {
 
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
-        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+        objectMapper.disable(WRITE_DATES_AS_TIMESTAMPS);
+        objectMapper.enable(INDENT_OUTPUT);
+        objectMapper.setSerializationInclusion(NON_NULL);
 
         try (CrawlLogIterator log = new CrawlLogIterator(Paths.get(args[0]))) {
             objectMapper.writeValue(System.out, summarisier.apply(log));

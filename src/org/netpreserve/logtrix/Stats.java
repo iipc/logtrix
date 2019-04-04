@@ -9,8 +9,13 @@ public class Stats {
     private long millis;
     private Instant firstTime;
     private Instant lastTime;
+    private String description;
 
     Stats() {}
+
+    Stats(String description) {
+        this.description = description;
+    }
 
     void add(CrawlDataItem item) {
         count++;
@@ -48,5 +53,9 @@ public class Stats {
 
     public Instant getFirstTime() {
         return firstTime;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }
