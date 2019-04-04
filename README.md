@@ -16,6 +16,14 @@ try (CrawlLogIterator log = new CrawlLogIterator(Paths.get("crawl.log"))) {
 
 ```
 
+### Grouping the summary by various things
+
+```java
+CrawlSummary.byRegisteredDomain(log);
+CrawlSummary.byHost(log);
+CrawlSummary.byKey(log, item -> item.getCaptureBegan().toString().substring(0, 4)); // by year
+```
+
 ### Working with status codes
 
 ```java
@@ -24,3 +32,13 @@ StatusCodes.describe(-4);       // "HTTP timeout"
 StatusCodes.isError(-4);        // true
 StatusCodes.isServerError(503); // true
 ```
+
+### Command-line interface
+
+Output a JSON crawl summary grouped by registered domain:
+
+    java org.netpreserve.logtrix.CrawlSummary -g registered-domain crawl.log
+    
+For more options:
+
+    java org.netpreserve.logtrix.CrawlSummary --help
