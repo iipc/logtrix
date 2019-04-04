@@ -16,6 +16,7 @@ import static org.netpreserve.logtrix.CrawlLogUtils.canonicalizeMimeType;
 
 public class CrawlSummary {
 
+    private final Stats totals = new Stats();
     private final Map<Integer, Stats> statusCodes = new HashMap<>();
     private final Map<String, Stats> mimeTypes = new HashMap<>();
 
@@ -63,12 +64,11 @@ public class CrawlSummary {
         String mimeType = canonicalizeMimeType(item.getMimeType());
         mimeTypes.computeIfAbsent(mimeType, m -> new Stats()).add(item);
         statusCodes.computeIfAbsent(item.getStatusCode(), s -> new Stats()).add(item);
+        totals.add(item);
     }
 
-    public void print(PrintStream out) {
-        for (Map.Entry<String, Stats> entry: getMimeTypes().entrySet()) {
-            out.println(entry.getKey() + " " + entry.getValue());
-        }
+    public Stats getTotals() {
+        return totals;
     }
 
     public Map<Integer, Stats> getStatusCodes() {
