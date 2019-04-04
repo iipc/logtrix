@@ -1,8 +1,6 @@
 package org.netpreserve.logtrix;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.net.InternetDomainName;
 
@@ -11,8 +9,6 @@ import java.net.URI;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 import static com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT;
@@ -26,6 +22,7 @@ public class CrawlSummary {
     private Stats totals = new Stats();
     private Map<Integer, Stats> statusCodes = new HashMap<>();
     private Map<String, Stats> mimeTypes = new HashMap<>();
+    private Map<String, Stats> sizeHisto = new HashMap<>();
 
     /**
      * Builds a global crawl summary (not broken down).

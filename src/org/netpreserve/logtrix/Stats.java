@@ -25,6 +25,9 @@ public class Stats {
             millis += captureDuration.toMillis();
         }
         Instant time = item.getCaptureBegan();
+        if (time == null) {
+            time = item.getTimestamp();
+        }
         if (time != null) {
             if (firstTime == null || time.isBefore(firstTime)) {
                 firstTime = time;
