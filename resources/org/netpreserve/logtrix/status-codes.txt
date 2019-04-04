@@ -1,0 +1,98 @@
+# HTTP status codes
+# https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
+100 Continue
+101 Switching Protocols
+102 Processing
+103 Early Hints
+200 OK
+201 Created
+202 Accepted
+203 Non-Authoritative Information
+204 No Content
+205 Reset Content
+206 Partial Content
+207 Multi-Status
+208 Already Reported
+226 IM Used
+300 Multiple Choices
+301 Moved Permanently
+302 Found
+303 See Other
+304 Not Modified
+305 Use Proxy
+306 (Unused)
+307 Temporary Redirect
+308 Permanent Redirect
+400 Bad Request
+401 Unauthorized
+402 Payment Required
+403 Forbidden
+404 Not Found
+405 Method Not Allowed
+406 Not Acceptable
+407 Proxy Authentication Required
+408 Request Timeout
+409 Conflict
+410 Gone
+411 Length Required
+412 Precondition Failed
+413 Payload Too Large
+414 URI Too Long
+415 Unsupported Media Type
+416 Range Not Satisfiable
+417 Expectation Failed
+421 Misdirected Request
+422 Unprocessable Entity
+423 Locked
+424 Failed Dependency
+425 Too Early
+426 Upgrade Required
+427 Unassigned
+428 Precondition Required
+429 Too Many Requests
+430 Unassigned
+431 Request Header Fields Too Large
+451 Unavailable For Legal Reasons
+500 Internal Server Error
+501 Not Implemented
+502 Bad Gateway
+503 Service Unavailable
+504 Gateway Timeout
+505 HTTP Version Not Supported
+506 Variant Also Negotiates
+507 Insufficient Storage
+508 Loop Detected
+509 Unassigned
+510 Not Extended
+511 Network Authentication Required
+
+# Heritrix status codes
+# https://github.com/internetarchive/heritrix3/wiki/Status-Codes
+1 Successful DNS lookup
+0 Fetch never tried (perhaps protocol unsupported or illegal URI)
+-1 DNS lookup failed
+-2 HTTP connect failed
+-3 HTTP connect broken
+-4 HTTP timeout
+-5 Unexpected runtime exception.  See runtime-errors.log.
+-6 Prerequisite domain-lookup failed, precluding fetch attempt. (the main pre-requisite is WHOIS lookup. If you see this it's likely the domain doesn't exist anymore)
+-7 URI recognized as unsupported or illegal.
+-8 Multiple retries failed, retry limit reached.
+-50 Temporary status assigned to URIs awaiting preconditions.  Appearance in logs may be a bug.
+-60 URIs assigned a failure status.  They could not be queued by the Frontier and may be unfetchable.
+-61 Prerequisite robots.txt fetch failed, precluding a fetch attempt.
+-62 Some other prerequisite failed, precluding a fetch attempt.
+-63 A prerequisite (of any type) could not be scheduled, precluding a fetch attempt.
+-404 Empty HTTP response interpreted as a 404.
+-3000 Severe Java Error condition occured such as OutOfMemoryError or StackOverflowError during URI processing.
+-4000 "Chaff" detection of traps/content with negligible value applied.
+-4001 The URI is too many link hops away from the seed.
+-4002 The URI is too many embed/transitive hops away from the last URI in scope.
+-5000 The URI is out of scope upon reexamination.  This only happens if the scope changes during the crawl.
+-5001 Blocked from fetch by user setting.
+-5002 Blocked by a custom processor, which could include the hash mapper (for multi-node crawling) if enabled.
+-5003 Blocked due to exceeding an established quota.
+-5004 Blocked due to exceeding an established runtime
+-6000 Deleted from Frontier by user.
+-7000 Processing thread was killed by the operator.  This could happen if a thread is an a non-responsive condition.
+-9998 Robots.txt rules precluded fetch.
