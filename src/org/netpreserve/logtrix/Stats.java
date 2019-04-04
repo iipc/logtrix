@@ -7,6 +7,9 @@ public class Stats {
     private long count;
     private long bytes;
     private long millis;
+    private long uniqueCount;
+    private long uniqueBytes;
+    private long uniqueMillis;
     private Instant firstTime;
     private Instant lastTime;
     private String description;
@@ -21,9 +24,15 @@ public class Stats {
         count++;
         bytes += item.getSize();
         Duration captureDuration = item.getCaptureDuration();
-        if (captureDuration != null) {
-            millis += captureDuration.toMillis();
+        long duration = captureDuration == null ? 0 : captureDuration.toMillis();
+        millis += duration;
+
+        if (!item.isDuplicate()) {
+            uniqueCount++;
+            uniqueBytes += item.getSize();
+            uniqueMillis += duration;
         }
+
         Instant time = item.getCaptureBegan();
         if (time == null) {
             time = item.getTimestamp();
@@ -60,5 +69,17 @@ public class Stats {
 
     public String getDescription() {
         return description;
+    }
+
+    public long getUniqueCount() {
+        return uniqueCount;
+    }
+
+    public long getUniqueBytes() {
+        return uniqueBytes;
+    }
+
+    public long getUniqueMillis() {
+        return uniqueMillis;
     }
 }

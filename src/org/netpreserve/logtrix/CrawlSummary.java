@@ -22,7 +22,7 @@ public class CrawlSummary {
     private Stats totals = new Stats();
     private Map<Integer, Stats> statusCodes = new HashMap<>();
     private Map<String, Stats> mimeTypes = new HashMap<>();
-    private Map<String, Stats> sizeHisto = new HashMap<>();
+    private Map<Long, Stats> sizeHisto = new TreeMap<>();
 
     /**
      * Builds a global crawl summary (not broken down).
@@ -71,7 +71,17 @@ public class CrawlSummary {
         String mimeType = canonicalizeMimeType(item.getMimeType());
         mimeTypes.computeIfAbsent(mimeType, m -> new Stats()).add(item);
         statusCodes.computeIfAbsent(item.getStatusCode(), code -> new Stats(StatusCodes.describe(code))).add(item);
+        // FIXME: pretty sure this bucketing is wrong
+        long sizeBucket = (long)Math.pow(8, Math.ceil(Math.log(item.getSize()) / Math.log(8)) + 1);
+        sizeHisto.computeIfAbsent(sizeBucket, b -> new Stats(humanSize(sizeBucket))).add(item);
         totals.add(item);
+    }
+
+    private static String humanSize(long bytes) {
+        if (bytes < 1024) return bytes + " B";
+        int e = (int) (Math.log(bytes) / Math.log(1024));
+        char c = "KMGTPE".charAt(e - 1);
+        return String.format("%d %siB", (long)(bytes / Math.pow(1024, e)), c);
     }
 
     /**
@@ -96,6 +106,7 @@ public class CrawlSummary {
                         Map.Entry::getValue,
                         (a, b) -> b,
                         LinkedHashMap::new));
+        summary.sizeHisto = sizeHisto;
         return summary;
     }
 
@@ -109,6 +120,10 @@ public class CrawlSummary {
 
     public Map<String, Stats> getMimeTypes() {
         return mimeTypes;
+    }
+
+    public Map<Long, Stats> getSizeHisto() {
+        return sizeHisto;
     }
 
     enum GroupBy {
