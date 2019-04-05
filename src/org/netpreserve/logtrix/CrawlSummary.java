@@ -23,6 +23,7 @@ public class CrawlSummary {
     private Map<Integer, Stats> statusCodes = new HashMap<>();
     private Map<String, Stats> mimeTypes = new HashMap<>();
     private Map<Long, Stats> sizeHisto = new TreeMap<>();
+    private Map<String, Stats> registeredDomains = new HashMap<>();
 
     /**
      * Builds a global crawl summary (not broken down).
@@ -58,13 +59,15 @@ public class CrawlSummary {
     }
 
     public static Map<String, CrawlSummary> byRegisteredDomain(Iterable<CrawlDataItem> log) {
-        return groupedBy(log, item -> {
-            try {
-                return InternetDomainName.from(URI.create(item.getURL()).getHost()).topPrivateDomain().toString();
-            } catch (Exception e) {
-                return "";
-            }
-        });
+        return groupedBy(log, item -> registeredDomain(item));
+    }
+
+    private static String registeredDomain(CrawlDataItem item) {
+        try {
+            return InternetDomainName.from(URI.create(item.getURL()).getHost()).topPrivateDomain().toString();
+        } catch (Exception e) {
+            return "";
+        }
     }
 
     private void add(CrawlDataItem item) {
@@ -74,6 +77,7 @@ public class CrawlSummary {
         // FIXME: pretty sure this bucketing is wrong
         long sizeBucket = (long)Math.pow(8, Math.ceil(Math.log(item.getSize()) / Math.log(8)) + 1);
         sizeHisto.computeIfAbsent(sizeBucket, b -> new Stats(humanSize(sizeBucket))).add(item);
+        registeredDomains.computeIfAbsent(registeredDomain(item), d -> new Stats()).add(item);
         totals.add(item);
     }
 
@@ -106,6 +110,14 @@ public class CrawlSummary {
                         Map.Entry::getValue,
                         (a, b) -> b,
                         LinkedHashMap::new));
+        summary.registeredDomains = registeredDomains.entrySet().stream().parallel()
+                .sorted(comparing(e -> -e.getValue().getCount()))
+                .limit(n)
+                .collect(toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (a, b) -> b,
+                        LinkedHashMap::new));
         summary.sizeHisto = sizeHisto;
         return summary;
     }
@@ -124,6 +136,10 @@ public class CrawlSummary {
 
     public Map<Long, Stats> getSizeHisto() {
         return sizeHisto;
+    }
+
+    public Map<String, Stats> getRegisteredDomains() {
+        return registeredDomains;
     }
 
     enum GroupBy {
