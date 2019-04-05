@@ -32,6 +32,8 @@ public class CrawlLogIterator implements AutoCloseable, Iterable<CrawlDataItem>,
     private static final Logger log = LoggerFactory.getLogger(CrawlLogIterator.class);
 
     private final ObjectMapper objectMapper = new ObjectMapper();
+    
+    private String duplicateMarker = "duplicate";
 
     /** 
      * A reader for the crawl.log file being processed
@@ -55,6 +57,9 @@ public class CrawlLogIterator implements AutoCloseable, Iterable<CrawlDataItem>,
     }
 
     public CrawlLogIterator(Reader reader) {
+    	if (System.getProperty("duplicate-marker") != null) {
+    		duplicateMarker = System.getProperty("duplicate-marker");
+    	}
         if (reader instanceof BufferedReader) {
             in = (BufferedReader) reader;
         } else {
@@ -215,7 +220,7 @@ public class CrawlLogIterator implements AutoCloseable, Iterable<CrawlDataItem>,
             
             // Index 11: Annotations (may be missing)
             boolean revisit = false;
-        	if (lineParts[11].contains("Revisit")) {
+        	if (lineParts[11].contains(duplicateMarker)) {
         		revisit=true;
         	}
             cdi.setDuplicate(revisit);
