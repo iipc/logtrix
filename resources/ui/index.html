@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+
+    <title>Crawl Log Summary Reviewer</title>
+  </head>
+  <body>
+    <h1>Crawl Log Summary Reviewer</h1>
+
+    <div class="container" id="file-picker">
+      <input type="file" id="fileinput"/>
+      <input type='button' id='btnLoad' value='Load' onclick='handleFileSelect();'>
+    </div>
+
+    <div id="reporter" style="display: none">
+      <ul class="nav nav-tabs mb-2">
+        <li class="nav-item">
+          <a class="nav-link active" href="#" onClick="show(this, 'overview-report')">Overview</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#" onClick="show(this, 'status-code-report')">Status Codes</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#" onClick="show(this, 'mimetype-report')">Mimetypes</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#" onClick="show(this, 'domain-report')">Domains</a>
+        </li>
+      </ul>
+
+      <div class="container" id="overview-report" style="display: none">
+        <div class="row">
+          <div class="col-2">URL Count</div><div class="col-10" id="totalCount"></div>
+          <div class="col-2">Bytes</div><div class="col-10" id="totalBytes"></div>
+        </div>
+
+      </div>
+
+      <div class="container-fluid" id="status-code-report" style="display: none">
+            <table id="status-code-table"
+              data-page-length='25'
+              class="table table-condensed table-hover table-striped">
+                <thead>
+                    <tr>
+                      <th>Code</th>
+                      <th class="text-nowrap">Description</th>
+                      <th>Count</th>
+                      <th>Duplicates</th>
+                      <th>Duplicates %</th>
+                      <th>Bytes</th>
+                      <th>Duplicate bytes</th>
+                      <th>Duplicate bytes %</th>
+                      <th>Avg. KB/sec</th>
+                      <th>First Capture</th>
+                      <th>Last Capture</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+      </div>
+
+      <div class="container-fluid" id="mimetype-report" style="display: none">
+            <table id="mimetype-table"
+              data-page-length='25'
+              class="table table-condensed table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th class="text-nowrap">Mimetype</th>
+                        <th>Count</th>
+                        <th>Duplicates</th>
+                        <th>Duplicates %</th>
+                        <th>Bytes</th>
+                        <th>Duplicate bytes</th>
+                        <th>Duplicate bytes %</th>
+                        <th>Avg. KB/sec</th>
+                        <th>First Capture</th>
+                        <th>Last Capture</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+      </div>
+      <div class="container-fluid" id="domain-report" style="display: none">
+            <table id="domain-table"
+              data-page-length='25'
+              class="table table-condensed table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th class="text-nowrap">Domain</th>
+                        <th>Count</th>
+                        <th>Duplicates</th>
+                        <th>Duplicates %</th>
+                        <th>Bytes</th>
+                        <th>Duplicate bytes</th>
+                        <th>Duplicate bytes %</th>
+                        <th>Avg. KB/sec</th>
+                        <th>First Capture</th>
+                        <th>Last Capture</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+      </div>
+
+    </div>
+
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script src="review.js"></script>
+  </body>
+</html>
