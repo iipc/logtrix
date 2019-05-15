@@ -1,4 +1,4 @@
-logtrix
+logtrix [![](https://maven-badges.herokuapp.com/maven-central/org.netpreserve/logtrix/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.netpreserve/logtrix) [![](https://www.javadoc.io/badge/org.netpreserve/logtrix.svg)](https://www.javadoc.io/doc/org.netpreserve/logtrix)
 =======
 
 Examples
