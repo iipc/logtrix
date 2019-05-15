@@ -5,6 +5,10 @@
     <artifactId>logtrix</artifactId>
     <version>0.1.0</version>
 
+    <name>logtrix</name>
+    <description>Parses and summarises Heritrix crawl logs</description>
+    <url>https://github.com/iipc/logtrix</url>
+
     <build>
         <sourceDirectory>${basedir}/src</sourceDirectory>
         <testSourceDirectory>${basedir}/test</testSourceDirectory>
