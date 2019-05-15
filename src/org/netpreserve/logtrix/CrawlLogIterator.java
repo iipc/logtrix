@@ -93,7 +93,7 @@ public class CrawlLogIterator implements AutoCloseable, Iterable<CrawlDataItem>,
      * @return An item from the crawl log.  Note that unlike the Iterator
      *         interface, this method returns null if there are no more items 
      *         to fetch.
-     * @throws IOException If there is an error reading the item *after* the
+     * @throws UncheckedIOException If there is an error reading the item *after* the
      *         item to be returned from the crawl.log.
      * @throws NoSuchElementException If there are no more items 
      */
@@ -111,7 +111,7 @@ public class CrawlLogIterator implements AutoCloseable, Iterable<CrawlDataItem>,
      * getNextItem() rejects.  When the method returns, either next is non-null
      * or there are no more items in the crawl log.
      * <p>
-     * Note: This method should only be called when <code>next==null<code>
+     * Note: This method should only be called when <code>next==null</code>
      */
     protected void prepareNext() throws IOException{
         String line;
