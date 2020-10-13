@@ -43,8 +43,16 @@ StatusCodes.isServerError(503); // true
 
 Output a JSON crawl summary grouped by registered domain:
 
-    java org.netpreserve.logtrix.CrawlSummary -g registered-domain crawl.log
+    java -jar target/*.jar -g registered-domain crawl.log
     
 For more options:
 
-    java org.netpreserve.logtrix.CrawlSummary --help
+    java -jar target/*.jar --help
+
+
+Compiling
+---------
+
+Install [Maven](http://maven.apache.org/) and then run:
+
+    mvn package
